@@ -9,19 +9,17 @@ import { useEffect, useRef, useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 
-
-
 const GenerateProgramPage = () => {
   const [callActive, setCallActive] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<{ content: string; role: string }[]>(
+    []
+  );
   const [callEnded, setCallEnded] = useState(false);
-  const [result , setResult] = useState(false);
   const { user } = useUser();
   const router = useRouter();
-  
-  
+
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
   // SOLUTION to get rid of "Meeting has ended" error
@@ -51,7 +49,8 @@ const GenerateProgramPage = () => {
   // auto-scroll messages
   useEffect(() => {
     if (messageContainerRef.current) {
-      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+      messageContainerRef.current.scrollTop =
+        messageContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
@@ -92,14 +91,19 @@ const GenerateProgramPage = () => {
       console.log("AI stopped Speaking");
       setIsSpeaking(false);
     };
-    const handleMessage = (message: any) => {
+    const handleMessage = (message: {
+      type: string;
+      transcriptType: string;
+      transcript: string;
+      role: string;
+    }) => {
       if (message.type === "transcript" && message.transcriptType === "final") {
         const newMessage = { content: message.transcript, role: message.role };
         setMessages((prev) => [...prev, newMessage]);
       }
     };
 
-    const handleError = (error: any) => {
+    const handleError = (error: unknown) => {
       console.log("Vapi Error", error);
       setConnecting(false);
       setCallActive(false);
@@ -151,43 +155,40 @@ const GenerateProgramPage = () => {
   };
 
   //--------------------------------------------------------------------------------
-  
+
   const getWeatherByUserId = useMutation(api.plans.getWeatherByUserId);
   const userId: string = user?.id ?? "";
 
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  if (!userId) return;
+  useEffect(() => {
+    if (!userId) return;
 
-  const fetchWeatherAndRedirect = async () => {
-    const re = await getWeatherByUserId({ userId });
+    const fetchWeatherAndRedirect = async () => {
+      const re = await getWeatherByUserId({ userId });
 
-    if (re === false) {
-      router.push("/locationEntry");
-      return;
-    }
+      if (re === false) {
+        router.push("/locationEntry");
+        return;
+      }
 
-    setResult(re);
-    setLoading(false);
-  };
+      setLoading(false);
+    };
 
-  const timer = setTimeout(fetchWeatherAndRedirect, 50);
+    const timer = setTimeout(fetchWeatherAndRedirect, 50);
 
-  return () => clearTimeout(timer);
-}, [userId, router]);
+    return () => clearTimeout(timer);
+  }, [userId, router, getWeatherByUserId]);
 
-if (loading) {
-  return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="text-2xl font-bold animate-pulse">Loading...</div>
-    </div>
-  );
-}
-
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-2xl font-bold animate-pulse">Loading...</div>
+      </div>
+    );
+  }
 
   return (
-    
     <div className="flex flex-col min-h-screen text-foreground overflow-hidden  pb-6 pt-24">
       <div className="container mx-auto px-4 h-full max-w-5xl">
         {/* Title */}
@@ -197,7 +198,8 @@ if (loading) {
             <span className="text-primary uppercase">Solar Plan</span>
           </h1>
           <p className="text-muted-foreground mt-2">
-            Have a voice conversation with our AI assistant to create your personalized plan
+            Have a voice conversation with our AI assistant to create your
+            personalized plan
           </p>
         </div>
 
@@ -222,7 +224,9 @@ if (loading) {
                       }`}
                       style={{
                         animationDelay: `${i * 0.1}s`,
-                        height: isSpeaking ? `${Math.random() * 50 + 20}%` : "5%",
+                        height: isSpeaking
+                          ? `${Math.random() * 50 + 20}%`
+                          : "5%",
                       }}
                     />
                   ))}
@@ -248,7 +252,9 @@ if (loading) {
               </div>
 
               <h2 className="text-xl font-bold text-foreground">Nitro AI</h2>
-              <p className="text-sm text-muted-foreground mt-1">AI Solar Consultant</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                AI Solar Consultant
+              </p>
 
               {/* SPEAKING INDICATOR */}
 
@@ -277,7 +283,9 @@ if (loading) {
           </Card>
 
           {/* USER CARD */}
-          <Card className={`bg-card/90 backdrop-blur-sm border overflow-hidden relative`}>
+          <Card
+            className={`bg-card/90 backdrop-blur-sm border overflow-hidden relative`}
+          >
             <div className="aspect-video flex flex-col items-center justify-center p-6 relative">
               {/* User Image */}
               <div className="relative size-32 mb-4">
@@ -291,11 +299,15 @@ if (loading) {
 
               <h2 className="text-xl font-bold text-foreground">You</h2>
               <p className="text-sm text-muted-foreground mt-1">
-                {user ? (user.firstName + " " + (user.lastName || "")).trim() : "Guest"}
+                {user
+                  ? (user.firstName + " " + (user.lastName || "")).trim()
+                  : "Guest"}
               </p>
 
               {/* User Ready Text */}
-              <div className={`mt-4 flex items-center gap-2 px-3 py-1 rounded-full bg-card border`}>
+              <div
+                className={`mt-4 flex items-center gap-2 px-3 py-1 rounded-full bg-card border`}
+              >
                 <div className={`w-2 h-2 rounded-full bg-muted`} />
                 <span className="text-xs text-muted-foreground">Ready</span>
               </div>
@@ -321,9 +333,12 @@ if (loading) {
 
               {callEnded && (
                 <div className="message-item animate-fadeIn">
-                  <div className="font-semibold text-xs text-primary mb-1">System:</div>
+                  <div className="font-semibold text-xs text-primary mb-1">
+                    System:
+                  </div>
                   <p className="text-foreground">
-                    Your fitness program has been created! Redirecting to your profile...
+                    Your fitness program has been created! Redirecting to your
+                    profile...
                   </p>
                 </div>
               )}

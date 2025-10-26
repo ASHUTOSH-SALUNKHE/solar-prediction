@@ -1,15 +1,12 @@
-"use client"
+"use client";
 
 import TerminalOverlay from "@/components/TerminalOverlay";
 import { Button } from "@/components/ui/button";
-import UserPrograms from "@/components/UserPrograms";
+
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 
 const HomePage = () => {
-
-  
-
   return (
     <div className="flex flex-col min-h-screen text-foreground overflow-hidden">
       <section className="relative z-10 py-24 flex-grow">
@@ -40,25 +37,32 @@ const HomePage = () => {
               <div className="h-px w-full bg-gradient-to-r from-primary via-secondary to-primary opacity-50 "></div>
 
               <p className="text-lg sm:text-xl text-muted-foreground lg:w-2/3">
-                  Talk to our AI assistant and get personalized solar panel recommendations, cost estimates, and energy savings tailored to your home's conditions.
+                Talk to our AI assistant and get personalized solar panel
+                recommendations, cost estimates, and energy savings tailored to
+                your home&apos;s conditions.
               </p>
-
 
               {/* STATS */}
               <div className="flex items-center gap-10 py-6 font-mono justify-center xl:justify-normal">
                 <div className="flex flex-col">
                   <div className="text-2xl text-red-600">HIGH</div>
-                  <div className="text-xs uppercase tracking-wider">ACCURACY</div>
+                  <div className="text-xs uppercase tracking-wider">
+                    ACCURACY
+                  </div>
                 </div>
                 <div className="h-12 w-px bg-gradient-to-b from-transparent via-border to-transparent"></div>
                 <div className="flex flex-col">
                   <div className="text-2xl text-red-600">3min</div>
-                  <div className="text-xs uppercase tracking-wider">GENERATION</div>
+                  <div className="text-xs uppercase tracking-wider">
+                    GENERATION
+                  </div>
                 </div>
                 <div className="h-12 w-px bg-gradient-to-b from-transparent via-border to-transparent"></div>
                 <div className="flex flex-col">
                   <div className="text-2xl text-red-600">100%</div>
-                  <div className="text-xs uppercase tracking-wider">PERSONALIZED</div>
+                  <div className="text-xs uppercase tracking-wider">
+                    PERSONALIZED
+                  </div>
                 </div>
               </div>
 
@@ -69,7 +73,10 @@ const HomePage = () => {
                   asChild
                   className="overflow-hidden bg-orange-600 text-primary-foreground px-8 py-6 text-lg font-medium"
                 >
-                  <Link href={"/generate-program"} className="flex items-center  font-mono">
+                  <Link
+                    href={"/generate-program"}
+                    className="flex items-center  font-mono"
+                  >
                     Build Your Program
                     <ArrowRightIcon className="ml-2 size-5" />
                   </Link>
@@ -89,7 +96,6 @@ const HomePage = () => {
 
               {/* IMAGE CONTANINER */}
               <div className="relative aspect-square w-full max-w-xl sm:max-w-xl md:max-w-xl lg:max-w-xl xl:max-w-xl mx-auto flex justify-center">
-
                 <div className="relative overflow-hidden rounded-lg bg-cyber-black">
                   <img
                     src="/image.png"
@@ -110,20 +116,15 @@ const HomePage = () => {
                     <div className="absolute top-0 left-1/2 h-1/4 w-px bg-primary/50" />
                     <div className="absolute bottom-0 left-1/2 h-1/4 w-px bg-primary/50" />
                   </div>
-
-                  
                 </div>
 
                 {/* TERMINAL OVERLAY */}
-                
               </div>
               <TerminalOverlay />
             </div>
           </div>
         </div>
       </section>
-
-      
     </div>
   );
 };
