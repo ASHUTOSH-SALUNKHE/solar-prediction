@@ -86,7 +86,14 @@ function Page() {
       const monthlyAverages = await fetchWeatherData(latitude, longitude);
 
       // Prepare the data to be inserted into the database
-      const monthlyDataToInsert = Object.keys(monthlyAverages).map((key) => {
+      const monthlyDataToInsert: {
+        month: number;
+        min_temperature: number;
+        max_temperature: number;
+        average_humidity: number | undefined;
+        average_windspeed: number;
+        average_radiation: number;
+      }[] = Object.keys(monthlyAverages).map((key) => {
         const month = parseInt(key, 10);
         const averages = monthlyAverages[month];
         return {
@@ -226,7 +233,20 @@ const fetchWeatherData = async (latitude: number, longitude: number) => {
     const windspeed = weatherData.daily.windspeed_10m_max;
     const radiation = weatherData.daily.shortwave_radiation_sum;
 
-    const monthlyData: { [key: string]: any } = {};
+    const monthlyData: {
+      [key: string]: {
+        tempMinSum: number;
+        tempMinCount: number;
+        tempMaxSum: number;
+        tempMaxCount: number;
+        humiditySum: number;
+        humidityCount: number;
+        windspeedSum: number;
+        windspeedCount: number;
+        radiationSum: number;
+        radiationCount: number;
+      };
+    } = {};
 
     for (let i = 0; i < dates.length; i++) {
       const date = new Date(dates[i]);
@@ -265,7 +285,15 @@ const fetchWeatherData = async (latitude: number, longitude: number) => {
     }
 
     // Calculate the averages for each month
-    const monthlyAverages: { [month: number]: any } = {};
+    const monthlyAverages: {
+      [month: number]: {
+        min_temperature: number;
+        max_temperature: number;
+        average_humidity: number | null;
+        average_windspeed: number;
+        average_radiation: number;
+      };
+    } = {};
 
     for (let month = 0; month < 12; month++) {
       const data = monthlyData[month];
